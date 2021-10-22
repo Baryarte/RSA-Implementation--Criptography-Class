@@ -1,6 +1,7 @@
 ﻿import secrets
 import math
 import base64
+import hashlib
 from Crypto.Cipher import AES
 
 randomNumberGenerator = secrets.SystemRandom()
@@ -124,18 +125,41 @@ def AES_cipher(data, AES_key):
     nonce = cipher.nonce
 
     ciphertext = cipher.encrypt(data)
-    hash = cipher.digest();
-    print(ciphertext, hash)
-    return ciphertext, nonce, hash
+    
+    print("Ciphertext, nonce: ", str(ciphertext).decode("utf-8"), nonce)
+    return ciphertext, nonce
 
-def AES_decipher(ciphertext, AES_key, nonce, hash):
+def AES_decipher(ciphertext, AES_key, nonce):
     cipher = AES.new(AES_key, AES.MODE_CTR, nonce=nonce)
     plaintext = cipher.decrypt(ciphertext)
     try:
-        cipher.verify(hash)
         print("Texto em claro: ", plaintext)
+        return plaintext
     except ValueError:
         print("Chave incorreta ou mensagem corrompida")
+
+
+
+# Generate 128 bit key
+def generate_key():
+    return secrets.token_bytes(16)
+
+def main():
+    print("Insira a sua mensagem: ")
+    data = input()
+    data_bytes = data.encode() # converte a string para bytes
+    hash_object = hashlib.sha512(data_bytes)    # faz o objeto hash da string
+    print("Hash: ", hash_object.hexdigest())    # printa o hash em hexadecimal
+    data = data.encode("ascii")
+    data = base64.b64encode(data)
+
+    key = generate_key()
+    print("Chave: ", key)
+    ciphertext, nonce, hash = AES_cipher(data, key)
+    print("Mensagem cifrada: ", ciphertext)
+    
+
+    
 
 # print(randomBits, miller_rabin(randomBits))
 # print(generate_e(4309534058743086459645906845906808))
@@ -156,7 +180,15 @@ def AES_decipher(ciphertext, AES_key, nonce, hash):
 #     private_keyQ,
 # )
 # RSA_decipher(result, public_keyE, public_keyN)
+
+
+
+
 AES_key = secrets.randbits(128)
 AES_key = AES_key.to_bytes(16, "big")
-ciphertext, nonce, hash = AES_cipher("rosaaaana ao senhooooor", AES_key)
-AES_decipher( ciphertext, AES_key, nonce, hash)
+text = "rosaaaana ao senhooooor!@#$"
+text = base64.b64encode(text.encode("ascii")) # base64 encode   
+ciphertext, nonce = AES_cipher(text, AES_key)
+plaintext = AES_decipher( ciphertext, AES_key, nonce)
+plaintext = base64.b64decode(plaintext).decode('ascii')
+print("Texto em claro: ", plaintext)
