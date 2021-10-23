@@ -8,6 +8,11 @@ randomNumberGenerator = secrets.SystemRandom()
 
 randomBits = secrets.randbits(1024)
 
+plaintext = None
+ciphertext = None
+nonce = None
+
+
 
 def miller_rabin_test(n, a):
 
@@ -74,6 +79,8 @@ def generate_e(totient):
 def multiplicative_inverse(e, totient):
     return pow(e, -1, totient)
 
+def MGF
+
 
 def RSA_cipher(data):
     result = ""
@@ -126,21 +133,23 @@ def AES_cipher(data, AES_key):
 
     ciphertext = cipher.encrypt(data)
     
-    print("Ciphertext, nonce: ", str(ciphertext).decode("utf-8"), nonce)
+    print("Ciphertext: ", ciphertext.hex())
+    print("Nonce: ", nonce.hex())
     return ciphertext, nonce
 
 def AES_decipher(ciphertext, AES_key, nonce):
     cipher = AES.new(AES_key, AES.MODE_CTR, nonce=nonce)
-    plaintext = cipher.decrypt(ciphertext)
     try:
-        print("Texto em claro: ", plaintext)
-        return plaintext
+        plaintext = cipher.decrypt(ciphertext)
+        decoded_plaintext = base64.b64decode(plaintext).decode()
+        print("Texto em claro: ", decoded_plaintext )
+        return decoded_plaintext
     except ValueError:
         print("Chave incorreta ou mensagem corrompida")
 
 
 
-# Generate 128 bit key
+# Gerar chave de 128 bits
 def generate_key():
     return secrets.token_bytes(16)
 
@@ -154,12 +163,11 @@ def main():
     data = base64.b64encode(data)
 
     key = generate_key()
-    print("Chave: ", key)
-    ciphertext, nonce, hash = AES_cipher(data, key)
-    print("Mensagem cifrada: ", ciphertext)
-    
+    print("Chave: ", key.hex())
+    ciphertext, nonce = AES_cipher(data, key)
+    plaintext = AES_decipher(ciphertext, key, nonce)
 
-    
+    # 9GmiJcIiRTijBMt7jShMfRqAK/2MvLQrWbaENwWHhnV5OG+uVGjeYmNJDmhPoEVBN6EgvW57CbX2a+KCv34+pw==
 
 # print(randomBits, miller_rabin(randomBits))
 # print(generate_e(4309534058743086459645906845906808))
@@ -183,12 +191,13 @@ def main():
 
 
 
+main()
 
-AES_key = secrets.randbits(128)
-AES_key = AES_key.to_bytes(16, "big")
-text = "rosaaaana ao senhooooor!@#$"
-text = base64.b64encode(text.encode("ascii")) # base64 encode   
-ciphertext, nonce = AES_cipher(text, AES_key)
-plaintext = AES_decipher( ciphertext, AES_key, nonce)
-plaintext = base64.b64decode(plaintext).decode('ascii')
-print("Texto em claro: ", plaintext)
+# AES_key = secrets.randbits(128)
+# AES_key = AES_key.to_bytes(16, "big")
+# text = "rosaaaana ao senhooooor!@#$"
+# text = base64.b64encode(text.encode("ascii")) # base64 encode   
+# ciphertext, nonce = AES_cipher(text, AES_key)
+# plaintext = AES_decipher( ciphertext, AES_key, nonce)
+# plaintext = base64.b64decode(plaintext).decode('ascii')
+# print("Texto em claro: ", plaintext)
