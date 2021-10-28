@@ -1,0 +1,4 @@
+- O algoritmo foi implementado em ambiente Windows 11 e foi feito em Python versão 3.9.5
+- Para executar o programa, abra o terminal e navegue até a pasta do código. Crie um arquivo para cifrar (.txt, .MOV, .png, etc.) na mesma pasta em que está o código e digite no terminal o comando "python ./RSA.py"
+- É possível utilizar o executável que está na pasta "Executavel/dist" e se chama RSA.exe. Nesse caso, o arquivo a ser cifrado deve estar na mesma pasta que o executável.
+- Pode ser necessário adicionar a pasta do código ou do executável à lista de exceções do anti-vírus.
